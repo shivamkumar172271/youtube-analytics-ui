@@ -30,7 +30,8 @@
   margin-top: -16px;
   padding: 14px 24px;
   background-color: #f1f3f4;
-  box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.45);
+  border-bottom: 1px solid #dcdfe3;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.22);
   margin-bottom: 16px;
 }
 
@@ -48,15 +49,15 @@
 }
 
 .close-btn:hover {
-  background-color: #f1f3f4;
+  background-color: #e8eaed;
 }
 
 .header-title {
-  font-family: var(--google-sans);
-  font-size: 22px;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 20px;
   font-weight: 400;
   color: #202124;
-  margin-left: 12px;
+  margin-left: 16px;
   letter-spacing: -0.2px;
 }
 
@@ -272,9 +273,10 @@
 }
 
 .metric-value.dashed-underline {
-  border-bottom: 4px dashed #202124;
-  padding-bottom: 1px;
+  border-bottom: 2px dashed #202124;
+  padding-bottom: 2px;
   cursor: pointer;
+  display: inline-block;
 }
 
 /* Audience Retention Section */

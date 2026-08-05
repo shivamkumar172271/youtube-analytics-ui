@@ -87,6 +87,22 @@ export default function App() {
 
 
 
+  // Convert URL image to Base64 to ensure pixel-perfect rendering in html2canvas without CORS distortion
+  const convertUrlToBase64 = async (url: string): Promise<string> => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () => resolve(url);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return url;
+    }
+  };
+
   // Fetch YouTube Title & Thumbnail using noembed
   const handleFetchYoutube = async () => {
     if (!youtubeUrl.trim()) return;
@@ -106,7 +122,8 @@ export default function App() {
           setArtist('YouTube Channel');
         }
         if (data.thumbnail_url) {
-          setCustomThumbnail(data.thumbnail_url);
+          const base64Thumb = await convertUrlToBase64(data.thumbnail_url);
+          setCustomThumbnail(base64Thumb);
         }
         setDuration('03:15');
         setImpressions('450K');
@@ -147,7 +164,9 @@ export default function App() {
         scale: 3,
         backgroundColor: '#ffffff',
         useCORS: true,
+        allowTaint: true,
         logging: false,
+        imageTimeout: 0,
       });
 
       const cleanFileName = (videoTitle || 'analytics')
