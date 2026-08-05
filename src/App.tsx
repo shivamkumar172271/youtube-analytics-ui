@@ -18,8 +18,6 @@ export default function App() {
   // Control Panel state
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [isFetching, setIsFetching] = useState(false);
-  const [impPercentBoost, setImpPercentBoost] = useState('');
-  const [viewsPercentBoost, setViewsPercentBoost] = useState('');
   const [ctrPercent, setCtrPercent] = useState('');
 
   const captureRef = useRef<HTMLDivElement>(null);
@@ -57,34 +55,6 @@ export default function App() {
     return Math.round(num).toString();
   };
 
-  // Separate Percentage Boost for Impressions (calculates on current input value)
-  const handleApplyImpBoost = (overridePercent?: number) => {
-    const percent = overridePercent !== undefined ? overridePercent : parseFloat(impPercentBoost);
-    if (isNaN(percent) || percent === 0) return;
-
-    const currentImp = parseMetricValue(impressions);
-    const newImp = currentImp > 0 ? Math.round(currentImp * (1 + percent / 100)) : 0;
-
-    if (newImp > 0) {
-      setImpressions(formatMetricValue(newImp));
-      if (!hasFetched) setHasFetched(true);
-    }
-  };
-
-  // Separate Percentage Boost for TrueView Views (calculates on current input value)
-  const handleApplyViewsBoost = (overridePercent?: number) => {
-    const percent = overridePercent !== undefined ? overridePercent : parseFloat(viewsPercentBoost);
-    if (isNaN(percent) || percent === 0) return;
-
-    const currentViews = parseMetricValue(trueViewViews);
-    const newViews = currentViews > 0 ? Math.round(currentViews * (1 + percent / 100)) : 0;
-
-    if (newViews > 0) {
-      setTrueViewViews(formatMetricValue(newViews));
-      if (!hasFetched) setHasFetched(true);
-    }
-  };
-
   // Excel Formula: Impressions = IF(CTR<>0, Views / (CTR/100), 0) (Uses current updated Views input)
   const handleCalculateImpressionsFromCTR = (overrideCTR?: number) => {
     const ctr = overrideCTR !== undefined ? overrideCTR : parseFloat(ctrPercent);
@@ -115,15 +85,7 @@ export default function App() {
     }
   };
 
-  // Calculate CTR % from current Impressions & Views inputs: CTR % = (Views / Impressions) * 100
-  const handleCalculateCTRFromMetrics = () => {
-    const imp = parseMetricValue(impressions);
-    const views = parseMetricValue(trueViewViews);
-    if (imp > 0 && views > 0) {
-      const ctr = (views / imp) * 100;
-      setCtrPercent(ctr.toFixed(1).replace(/\.0$/, ''));
-    }
-  };
+
 
   // Fetch YouTube Title & Thumbnail using noembed
   const handleFetchYoutube = async () => {
@@ -466,69 +428,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Boost Impressions by Percentage (%) */}
-          <div className="form-group">
-            <label className="form-label">Boost Impressions by %</label>
-            <div className="fetch-row">
-              <input
-                type="number"
-                className="form-input"
-                style={{ flex: 1 }}
-                placeholder="e.g. 20 for +20%"
-                value={impPercentBoost}
-                onChange={(e) => setImpPercentBoost(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleApplyImpBoost();
-                }}
-              />
-              <button
-                className="btn-primary"
-                onClick={() => handleApplyImpBoost()}
-                type="button"
-              >
-                + Boost
-              </button>
-            </div>
-            <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyImpBoost(10)} type="button">+10%</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyImpBoost(20)} type="button">+20%</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyImpBoost(50)} type="button">+50%</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyImpBoost(100)} type="button">+100%</button>
-            </div>
-          </div>
-
-          {/* Boost TrueView Views by Percentage (%) */}
-          <div className="form-group">
-            <label className="form-label">Boost TrueView Views by %</label>
-            <div className="fetch-row">
-              <input
-                type="number"
-                className="form-input"
-                style={{ flex: 1 }}
-                placeholder="e.g. 20 for +20%"
-                value={viewsPercentBoost}
-                onChange={(e) => setViewsPercentBoost(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleApplyViewsBoost();
-                }}
-              />
-              <button
-                className="btn-primary"
-                onClick={() => handleApplyViewsBoost()}
-                type="button"
-              >
-                + Boost
-              </button>
-            </div>
-            <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(10)} type="button">+10%</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(20)} type="button">+20%</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(50)} type="button">+50%</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(100)} type="button">+100%</button>
-            </div>
-          </div>
-
-          {/* CTR % Auto-Calculator (Excel Formula: Impressions = Views / (CTR % / 100)) */}
+          {/* CTR % Calculator (Excel Formula: Impressions = Views / (CTR % / 100)) */}
           <div
             className="form-group"
             style={{
@@ -545,7 +445,7 @@ export default function App() {
               📊 CTR % Calculator (Excel Formula: Impressions = Views / (CTR % / 100))
             </label>
             <span style={{ fontSize: '12px', color: '#5f6368', marginBottom: '8px', display: 'block' }}>
-              Enter CTR % (e.g., 40 or 53) to automatically calculate Impressions from Views, or Views from Impressions.
+              Enter CTR % to calculate Impressions from Views, or Views from Impressions.
             </span>
             <div className="fetch-row" style={{ gap: '10px' }}>
               <input
@@ -575,22 +475,6 @@ export default function App() {
               >
                 Calc Views
               </button>
-              <button
-                className="btn-secondary"
-                onClick={handleCalculateCTRFromMetrics}
-                type="button"
-                style={{ backgroundColor: '#ffffff', borderColor: '#5f6368', color: '#3c4043', fontWeight: 600 }}
-                title="Auto-detect CTR % from current Impressions & Views inputs"
-              >
-                Auto-Detect CTR %
-              </button>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', fontWeight: 500, color: '#3c4043' }}>Quick Presets:</span>
-              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('4'); handleCalculateImpressionsFromCTR(4); }} type="button">4% CTR (e.g. 1.2K views → 30K imp)</button>
-              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('10'); handleCalculateImpressionsFromCTR(10); }} type="button">10% CTR</button>
-              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('40'); handleCalculateImpressionsFromCTR(40); }} type="button">40% CTR (e.g. 100 views → 250 imp)</button>
-              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('53'); handleCalculateImpressionsFromCTR(53); }} type="button">53% CTR (e.g. 301K views → 568K imp)</button>
             </div>
           </div>
         </div>
