@@ -200,7 +200,17 @@ export default function App() {
             header.style.zIndex = '2';
             header.style.border = 'none';
             header.style.borderBottom = 'none';
-            header.style.boxShadow = '0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2)';
+          }
+
+          const shadowBar = element.querySelector('.header-box-shadow-bar') as HTMLElement;
+          if (shadowBar) {
+            shadowBar.style.display = 'block';
+            shadowBar.style.position = 'absolute';
+            shadowBar.style.bottom = '-8px';
+            shadowBar.style.left = '0';
+            shadowBar.style.right = '0';
+            shadowBar.style.height = '8px';
+            shadowBar.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0.10) 45%, rgba(0, 0, 0, 0.03) 75%, rgba(0, 0, 0, 0) 100%)';
           }
 
           const tabsNav = element.querySelector('.tabs-navigation') as HTMLElement;
@@ -296,6 +306,7 @@ export default function App() {
             <X size={20} />
           </button>
           <h1 className="header-title">Analytics</h1>
+          <div className="header-box-shadow-bar" />
         </header>
 
         {/* Tab Navigation */}
