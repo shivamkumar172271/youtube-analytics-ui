@@ -193,6 +193,12 @@ export default function App() {
           element.style.maxWidth = '740px';
           element.style.boxSizing = 'border-box';
 
+          const header = element.querySelector('.analytics-header') as HTMLElement;
+          if (header) {
+            header.style.borderBottom = 'none';
+            header.style.boxShadow = '0px 3px 6px rgba(0, 0, 0, 0.12)';
+          }
+
           const content = element.querySelector('.analytics-content') as HTMLElement;
           if (content) {
             content.style.display = 'flex';
