@@ -236,7 +236,7 @@ export default function App() {
           if (divider) {
             divider.style.display = 'block';
             divider.style.width = '1px';
-            divider.style.height = '48px';
+            divider.style.height = '68px';
             divider.style.backgroundColor = '#dadce0';
             divider.style.flexShrink = '0';
             divider.style.alignSelf = 'center';

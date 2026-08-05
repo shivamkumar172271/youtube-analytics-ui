@@ -260,7 +260,7 @@
 /* Vertical Separator Divider Line */
 .video-metrics-divider {
   width: 1px;
-  height: 48px;
+  height: 68px;
   background-color: #dadce0;
   flex-shrink: 0;
   align-self: center;
