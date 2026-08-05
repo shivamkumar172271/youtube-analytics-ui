@@ -261,12 +261,11 @@ export default function App() {
       cardEl.style.maxWidth = origMaxWidth;
 
       const cleanFileName = (videoTitle || 'analytics')
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .substring(0, 30);
+        .replace(/[/\\?%*:|"<>]/g, '')
+        .trim();
 
       const link = document.createElement('a');
-      link.download = `YouTube-Analytics-${cleanFileName || 'screenshot'}.png`;
+      link.download = `${cleanFileName || 'analytics'}.png`;
       link.href = canvas.toDataURL('image/png', 1.0);
       link.click();
     } catch (err) {
