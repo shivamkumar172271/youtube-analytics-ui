@@ -25,10 +25,11 @@ export default function App() {
   const captureRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper to parse metric string like "450K", "1.2M", "5000" into a number
+  // Helper to parse metric string like "450K", "1.2M", "1,200", "200" into a number
   const parseMetricValue = (val: string): number => {
     if (!val) return 0;
-    const cleanStr = val.trim().toUpperCase();
+    // Strip commas, spaces, and formatting characters
+    const cleanStr = val.toString().replace(/,/g, '').trim().toUpperCase();
     if (cleanStr.endsWith('K')) {
       return parseFloat(cleanStr.replace('K', '')) * 1000;
     }
@@ -41,7 +42,7 @@ export default function App() {
     return parseFloat(cleanStr) || 0;
   };
 
-  // Helper to format number back into clean metric string like "540K", "1.4M", etc.
+  // Helper to format number back into clean metric string like "540K", "1.4M", "250", etc.
   const formatMetricValue = (num: number): string => {
     if (isNaN(num) || num <= 0) return '0';
     if (num >= 1000000000) {
@@ -56,7 +57,7 @@ export default function App() {
     return Math.round(num).toString();
   };
 
-  // Separate Percentage Boost for Impressions
+  // Separate Percentage Boost for Impressions (calculates on current input value)
   const handleApplyImpBoost = (overridePercent?: number) => {
     const percent = overridePercent !== undefined ? overridePercent : parseFloat(impPercentBoost);
     if (isNaN(percent) || percent === 0) return;
@@ -70,7 +71,7 @@ export default function App() {
     }
   };
 
-  // Separate Percentage Boost for TrueView Views
+  // Separate Percentage Boost for TrueView Views (calculates on current input value)
   const handleApplyViewsBoost = (overridePercent?: number) => {
     const percent = overridePercent !== undefined ? overridePercent : parseFloat(viewsPercentBoost);
     if (isNaN(percent) || percent === 0) return;
@@ -84,7 +85,7 @@ export default function App() {
     }
   };
 
-  // Excel Formula: Impressions = IF(CTR<>0, Views / (CTR/100), 0)
+  // Excel Formula: Impressions = IF(CTR<>0, Views / (CTR/100), 0) (Uses current updated Views input)
   const handleCalculateImpressionsFromCTR = (overrideCTR?: number) => {
     const ctr = overrideCTR !== undefined ? overrideCTR : parseFloat(ctrPercent);
     if (isNaN(ctr) || ctr <= 0) return;
@@ -99,7 +100,7 @@ export default function App() {
     }
   };
 
-  // Excel Formula: Views = Impressions * (CTR/100)
+  // Excel Formula: Views = Impressions * (CTR/100) (Uses current updated Impressions input)
   const handleCalculateViewsFromCTR = (overrideCTR?: number) => {
     const ctr = overrideCTR !== undefined ? overrideCTR : parseFloat(ctrPercent);
     if (isNaN(ctr) || ctr <= 0) return;
@@ -111,6 +112,16 @@ export default function App() {
     if (calculatedViews > 0) {
       setTrueViewViews(formatMetricValue(calculatedViews));
       if (!hasFetched) setHasFetched(true);
+    }
+  };
+
+  // Calculate CTR % from current Impressions & Views inputs: CTR % = (Views / Impressions) * 100
+  const handleCalculateCTRFromMetrics = () => {
+    const imp = parseMetricValue(impressions);
+    const views = parseMetricValue(trueViewViews);
+    if (imp > 0 && views > 0) {
+      const ctr = (views / imp) * 100;
+      setCtrPercent(ctr.toFixed(1).replace(/\.0$/, ''));
     }
   };
 
@@ -551,6 +562,15 @@ export default function App() {
                 style={{ backgroundColor: '#ffffff', borderColor: '#1a73e8', color: '#1a73e8', fontWeight: 600 }}
               >
                 Calc Views
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={handleCalculateCTRFromMetrics}
+                type="button"
+                style={{ backgroundColor: '#ffffff', borderColor: '#5f6368', color: '#3c4043', fontWeight: 600 }}
+                title="Auto-detect CTR % from current Impressions & Views inputs"
+              >
+                Auto-Detect CTR %
               </button>
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
