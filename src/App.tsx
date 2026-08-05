@@ -198,8 +198,21 @@ export default function App() {
             header.style.backgroundColor = '#f1f3f4';
             header.style.position = 'relative';
             header.style.zIndex = '2';
-            header.style.boxShadow = '0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2)';
+            header.style.border = 'none';
+            header.style.borderBottom = 'none';
+            header.style.boxShadow = '0 5px 8px rgba(0, 0, 0, 0.16)';
           }
+
+          const tabsNav = element.querySelector('.tabs-navigation') as HTMLElement;
+          if (tabsNav) {
+            tabsNav.style.border = 'none';
+            tabsNav.style.borderTop = 'none';
+          }
+          const tabItems = element.querySelectorAll('.tab-item');
+          tabItems.forEach((tab) => {
+            (tab as HTMLElement).style.border = 'none';
+            (tab as HTMLElement).style.borderTop = 'none';
+          });
 
           const content = element.querySelector('.analytics-content') as HTMLElement;
           if (content) {
