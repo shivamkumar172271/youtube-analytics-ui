@@ -204,11 +204,11 @@ export default function App() {
           if (shadowStrip) {
             shadowStrip.style.display = 'block';
             shadowStrip.style.position = 'absolute';
-            shadowStrip.style.bottom = '-6px';
+            shadowStrip.style.bottom = '-7px';
             shadowStrip.style.left = '0';
             shadowStrip.style.right = '0';
-            shadowStrip.style.height = '6px';
-            shadowStrip.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.05) 60%, rgba(0, 0, 0, 0) 100%)';
+            shadowStrip.style.height = '7px';
+            shadowStrip.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0.12) 2px, rgba(0, 0, 0, 0.04) 4px, rgba(0, 0, 0, 0) 7px)';
           }
 
           const content = element.querySelector('.analytics-content') as HTMLElement;
