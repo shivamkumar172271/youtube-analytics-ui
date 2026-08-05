@@ -198,6 +198,7 @@ export default function App() {
             header.style.backgroundColor = '#f1f3f4';
             header.style.position = 'relative';
             header.style.zIndex = '2';
+            header.style.boxShadow = '0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2)';
           }
 
           const shadowStrip = element.querySelector('.header-shadow-strip') as HTMLElement;
@@ -217,7 +218,7 @@ export default function App() {
             content.style.flexDirection = 'row';
             content.style.flexWrap = 'nowrap';
             content.style.justifyContent = 'flex-start';
-            content.style.gap = '44px';
+            content.style.gap = '24px';
             content.style.width = 'calc(100% + 48px)';
             content.style.marginLeft = '-24px';
             content.style.marginRight = '-24px';
@@ -239,6 +240,8 @@ export default function App() {
             divider.style.backgroundColor = '#dadce0';
             divider.style.flexShrink = '0';
             divider.style.alignSelf = 'center';
+            divider.style.marginLeft = '-6px';
+            divider.style.marginRight = '12px';
           }
           const metricsGroup = element.querySelector('.metrics-group') as HTMLElement;
           if (metricsGroup) {
