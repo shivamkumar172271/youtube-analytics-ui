@@ -247,7 +247,10 @@ export default function App() {
               <div className="video-info-group">
                 <div className="thumbnail-box">
                   {customThumbnail ? (
-                    <img src={customThumbnail} alt="Video thumbnail" className="thumbnail-img" />
+                    <div
+                      className="thumbnail-img-bg"
+                      style={{ backgroundImage: `url(${customThumbnail})` }}
+                    />
                   ) : (
                     <div className="default-artwork">
                       <div className="artwork-center">
