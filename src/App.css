@@ -134,7 +134,7 @@
   margin-right: -24px;
   width: calc(100% + 48px);
   box-sizing: border-box;
-  border-top: 1px solid #dadce0;
+  border-top: none;
   border-bottom: 1px solid #dadce0;
   flex-wrap: nowrap;
 }
