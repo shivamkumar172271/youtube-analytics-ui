@@ -210,7 +210,7 @@ export default function App() {
             shadowBar.style.left = '0';
             shadowBar.style.right = '0';
             shadowBar.style.height = '8px';
-            shadowBar.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0.10) 45%, rgba(0, 0, 0, 0.03) 75%, rgba(0, 0, 0, 0) 100%)';
+            shadowBar.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0.18) 2px, rgba(0, 0, 0, 0.06) 5px, rgba(0, 0, 0, 0) 8px)';
           }
 
           const tabsNav = element.querySelector('.tabs-navigation') as HTMLElement;
