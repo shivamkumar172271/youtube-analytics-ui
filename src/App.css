@@ -296,6 +296,7 @@
 .metric-value.dashed-underline {
   border-bottom: 4px dashed #202124;
   padding-bottom: 0px;
+  line-height: 0.85;
   cursor: pointer;
   display: inline-block;
 }
