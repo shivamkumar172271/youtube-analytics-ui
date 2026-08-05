@@ -186,7 +186,36 @@ export default function App() {
         allowTaint: true,
         logging: false,
         imageTimeout: 0,
-        windowWidth: 1024,
+        windowWidth: 1200,
+        onclone: (_clonedDoc, element) => {
+          element.style.width = '840px';
+          element.style.minWidth = '840px';
+          element.style.maxWidth = '840px';
+          element.style.boxSizing = 'border-box';
+
+          const content = element.querySelector('.analytics-content') as HTMLElement;
+          if (content) {
+            content.style.display = 'flex';
+            content.style.flexDirection = 'row';
+            content.style.flexWrap = 'nowrap';
+            content.style.justifyContent = 'flex-start';
+            content.style.gap = '48px';
+            content.style.width = '100%';
+          }
+          const videoGroup = element.querySelector('.video-info-group') as HTMLElement;
+          if (videoGroup) {
+            videoGroup.style.flexShrink = '0';
+            videoGroup.style.display = 'flex';
+            videoGroup.style.flexDirection = 'row';
+          }
+          const metricsGroup = element.querySelector('.metrics-group') as HTMLElement;
+          if (metricsGroup) {
+            metricsGroup.style.flexShrink = '0';
+            metricsGroup.style.display = 'flex';
+            metricsGroup.style.flexDirection = 'row';
+            metricsGroup.style.gap = '64px';
+          }
+        }
       });
 
       // Restore original inline styles
