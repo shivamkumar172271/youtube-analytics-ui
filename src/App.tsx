@@ -231,6 +231,15 @@ export default function App() {
             videoGroup.style.display = 'flex';
             videoGroup.style.flexDirection = 'row';
           }
+          const divider = element.querySelector('.video-metrics-divider') as HTMLElement;
+          if (divider) {
+            divider.style.display = 'block';
+            divider.style.width = '1px';
+            divider.style.height = '48px';
+            divider.style.backgroundColor = '#dadce0';
+            divider.style.flexShrink = '0';
+            divider.style.alignSelf = 'center';
+          }
           const metricsGroup = element.querySelector('.metrics-group') as HTMLElement;
           if (metricsGroup) {
             metricsGroup.style.flexShrink = '0';
@@ -349,6 +358,9 @@ export default function App() {
                   </div>
                 </div>
               </div>
+
+              {/* Vertical Separator Divider Line */}
+              <div className="video-metrics-divider" />
 
               {/* Right: Metrics */}
               <div className="metrics-group">
