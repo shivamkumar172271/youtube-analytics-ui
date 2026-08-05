@@ -133,6 +133,8 @@
   padding: 24px 24px;
   margin-left: -24px;
   margin-right: -24px;
+  width: calc(100% + 48px);
+  box-sizing: border-box;
   border-top: 1px solid #dadce0;
   border-bottom: 1px solid #dadce0;
   flex-wrap: nowrap;
@@ -293,7 +295,7 @@
 
 .metric-value.dashed-underline {
   border-bottom: 4px dashed #202124;
-  padding-bottom: 1px;
+  padding-bottom: 2px;
   cursor: pointer;
   display: inline-block;
 }

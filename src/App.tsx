@@ -200,7 +200,10 @@ export default function App() {
             content.style.flexWrap = 'nowrap';
             content.style.justifyContent = 'flex-start';
             content.style.gap = '44px';
-            content.style.width = '100%';
+            content.style.width = 'calc(100% + 48px)';
+            content.style.marginLeft = '-24px';
+            content.style.marginRight = '-24px';
+            content.style.boxSizing = 'border-box';
           }
           const videoGroup = element.querySelector('.video-info-group') as HTMLElement;
           if (videoGroup) {
