@@ -87,6 +87,13 @@ export default function App() {
 
 
 
+  // Truncate title string with "..." if long, ensuring html2canvas canvas export renders the "..." dot reliably
+  const formatTitleWithEllipsis = (title: string, maxLength: number = 42) => {
+    if (!title) return 'Untitled Video';
+    if (title.length <= maxLength) return title;
+    return title.substring(0, maxLength).trim() + '...';
+  };
+
   // Convert URL image to Base64 to ensure pixel-perfect rendering in html2canvas without CORS distortion
   const convertUrlToBase64 = async (url: string): Promise<string> => {
     try {
@@ -262,7 +269,7 @@ export default function App() {
 
                 <div className="video-details">
                   <div className="video-title" title={videoTitle || 'Untitled Video'}>
-                    {videoTitle || 'Untitled Video'}
+                    {formatTitleWithEllipsis(videoTitle || 'Untitled Video')}
                   </div>
                   <div className="video-meta-subtitle">
                     <span>{duration || '00:00'}</span>
