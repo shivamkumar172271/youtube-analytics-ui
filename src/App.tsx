@@ -20,6 +20,7 @@ export default function App() {
   const [isFetching, setIsFetching] = useState(false);
   const [impPercentBoost, setImpPercentBoost] = useState('');
   const [viewsPercentBoost, setViewsPercentBoost] = useState('');
+  const [ctrPercent, setCtrPercent] = useState('');
 
   const captureRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -79,6 +80,36 @@ export default function App() {
 
     if (newViews > 0) {
       setTrueViewViews(formatMetricValue(newViews));
+      if (!hasFetched) setHasFetched(true);
+    }
+  };
+
+  // Excel Formula: Impressions = IF(CTR<>0, Views / (CTR/100), 0)
+  const handleCalculateImpressionsFromCTR = (overrideCTR?: number) => {
+    const ctr = overrideCTR !== undefined ? overrideCTR : parseFloat(ctrPercent);
+    if (isNaN(ctr) || ctr <= 0) return;
+
+    const views = parseMetricValue(trueViewViews);
+    if (views <= 0) return;
+
+    const calculatedImp = Math.round(views / (ctr / 100));
+    if (calculatedImp > 0) {
+      setImpressions(formatMetricValue(calculatedImp));
+      if (!hasFetched) setHasFetched(true);
+    }
+  };
+
+  // Excel Formula: Views = Impressions * (CTR/100)
+  const handleCalculateViewsFromCTR = (overrideCTR?: number) => {
+    const ctr = overrideCTR !== undefined ? overrideCTR : parseFloat(ctrPercent);
+    if (isNaN(ctr) || ctr <= 0) return;
+
+    const imp = parseMetricValue(impressions);
+    if (imp <= 0) return;
+
+    const calculatedViews = Math.round(imp * (ctr / 100));
+    if (calculatedViews > 0) {
+      setTrueViewViews(formatMetricValue(calculatedViews));
       if (!hasFetched) setHasFetched(true);
     }
   };
@@ -471,6 +502,45 @@ export default function App() {
               <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(20)} type="button">+20%</button>
               <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(50)} type="button">+50%</button>
               <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleApplyViewsBoost(100)} type="button">+100%</button>
+            </div>
+          </div>
+
+          {/* CTR % Auto-Calculator (Excel Formula: Impressions = Views / (CTR % / 100)) */}
+          <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e8eaed' }}>
+            <label className="form-label">CTR % Calculation (Excel Formula: Impressions = Views / (CTR % / 100))</label>
+            <div className="fetch-row">
+              <input
+                type="number"
+                className="form-input"
+                style={{ flex: 1 }}
+                placeholder="Enter CTR % e.g. 53 for 53% or 40 for 40%"
+                value={ctrPercent}
+                onChange={(e) => setCtrPercent(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleCalculateImpressionsFromCTR();
+                }}
+              />
+              <button
+                className="btn-primary"
+                onClick={() => handleCalculateImpressionsFromCTR()}
+                type="button"
+              >
+                Calc Impressions
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => handleCalculateViewsFromCTR()}
+                type="button"
+              >
+                Calc Views
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', color: '#5f6368' }}>CTR Presets:</span>
+              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('4'); handleCalculateImpressionsFromCTR(4); }} type="button">4% CTR</button>
+              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('10'); handleCalculateImpressionsFromCTR(10); }} type="button">10% CTR</button>
+              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('40'); handleCalculateImpressionsFromCTR(40); }} type="button">40% CTR</button>
+              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('53'); handleCalculateImpressionsFromCTR(53); }} type="button">53% CTR</button>
             </div>
           </div>
         </div>
