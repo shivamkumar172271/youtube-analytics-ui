@@ -400,10 +400,16 @@ export default function App() {
               type="text"
               className="form-input"
               value={impressions}
-              placeholder="e.g. 500K"
+              placeholder="e.g. 500K or 500000"
               onChange={(e) => {
                 setImpressions(e.target.value);
                 if (!hasFetched) setHasFetched(true);
+              }}
+              onBlur={() => {
+                if (impressions.trim()) {
+                  const parsed = parseMetricValue(impressions);
+                  if (parsed > 0) setImpressions(formatMetricValue(parsed));
+                }
               }}
             />
           </div>
@@ -415,10 +421,16 @@ export default function App() {
               type="text"
               className="form-input"
               value={trueViewViews}
-              placeholder="e.g. 300K"
+              placeholder="e.g. 300K or 300000"
               onChange={(e) => {
                 setTrueViewViews(e.target.value);
                 if (!hasFetched) setHasFetched(true);
+              }}
+              onBlur={() => {
+                if (trueViewViews.trim()) {
+                  const parsed = parseMetricValue(trueViewViews);
+                  if (parsed > 0) setTrueViewViews(formatMetricValue(parsed));
+                }
               }}
             />
           </div>
