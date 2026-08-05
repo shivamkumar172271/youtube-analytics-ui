@@ -208,7 +208,7 @@ export default function App() {
             shadowStrip.style.left = '0';
             shadowStrip.style.right = '0';
             shadowStrip.style.height = '7px';
-            shadowStrip.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0.18) 0px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.04) 4px, rgba(0, 0, 0, 0) 7px)';
+            shadowStrip.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.04) 4px, rgba(0, 0, 0, 0) 7px)';
           }
 
           const content = element.querySelector('.analytics-content') as HTMLElement;
