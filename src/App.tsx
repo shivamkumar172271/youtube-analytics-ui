@@ -159,7 +159,7 @@ export default function App() {
     }
   };
 
-  // Download high-resolution PNG screenshot
+  // Download high-resolution PNG screenshot (Always exports in Desktop layout width)
   const handleDownloadScreenshot = async () => {
     if (!hasFetched) {
       alert('Please fetch a YouTube link first before downloading analytics.');
@@ -167,14 +167,32 @@ export default function App() {
     }
     if (!captureRef.current) return;
     try {
-      const canvas = await html2canvas(captureRef.current, {
+      const cardEl = captureRef.current;
+
+      // Save original styles
+      const origWidth = cardEl.style.width;
+      const origMinWidth = cardEl.style.minWidth;
+      const origMaxWidth = cardEl.style.maxWidth;
+
+      // Enforce Desktop layout dimensions during screenshot capture (800px)
+      cardEl.style.width = '800px';
+      cardEl.style.minWidth = '800px';
+      cardEl.style.maxWidth = '800px';
+
+      const canvas = await html2canvas(cardEl, {
         scale: 3,
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
         logging: false,
         imageTimeout: 0,
+        windowWidth: 1024,
       });
+
+      // Restore original inline styles
+      cardEl.style.width = origWidth;
+      cardEl.style.minWidth = origMinWidth;
+      cardEl.style.maxWidth = origMaxWidth;
 
       const cleanFileName = (videoTitle || 'analytics')
         .replace(/[^a-zA-Z0-9]/g, '-')
