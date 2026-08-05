@@ -195,9 +195,20 @@ export default function App() {
 
           const header = element.querySelector('.analytics-header') as HTMLElement;
           if (header) {
-            header.style.border = 'none';
-            header.style.borderBottom = 'none';
-            header.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.22)';
+            header.style.backgroundColor = '#f1f3f4';
+            header.style.position = 'relative';
+            header.style.zIndex = '2';
+          }
+
+          const shadowStrip = element.querySelector('.header-shadow-strip') as HTMLElement;
+          if (shadowStrip) {
+            shadowStrip.style.display = 'block';
+            shadowStrip.style.position = 'absolute';
+            shadowStrip.style.bottom = '-6px';
+            shadowStrip.style.left = '0';
+            shadowStrip.style.right = '0';
+            shadowStrip.style.height = '6px';
+            shadowStrip.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.05) 60%, rgba(0, 0, 0, 0) 100%)';
           }
 
           const content = element.querySelector('.analytics-content') as HTMLElement;
@@ -272,6 +283,7 @@ export default function App() {
             <X size={20} />
           </button>
           <h1 className="header-title">Analytics</h1>
+          <div className="header-shadow-strip" />
         </header>
 
         {/* Tab Navigation */}
