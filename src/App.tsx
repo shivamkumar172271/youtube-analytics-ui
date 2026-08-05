@@ -506,14 +506,30 @@ export default function App() {
           </div>
 
           {/* CTR % Auto-Calculator (Excel Formula: Impressions = Views / (CTR % / 100)) */}
-          <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e8eaed' }}>
-            <label className="form-label">CTR % Calculation (Excel Formula: Impressions = Views / (CTR % / 100))</label>
-            <div className="fetch-row">
+          <div
+            className="form-group"
+            style={{
+              gridColumn: '1 / -1',
+              margin: '12px 0',
+              padding: '16px',
+              backgroundColor: '#f0f4f9',
+              border: '1.5px solid #c2e7ff',
+              borderRadius: '8px',
+              boxShadow: '0 1px 3px rgba(26, 115, 232, 0.08)'
+            }}
+          >
+            <label className="form-label" style={{ color: '#1a73e8', fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>
+              📊 CTR % Calculator (Excel Formula: Impressions = Views / (CTR % / 100))
+            </label>
+            <span style={{ fontSize: '12px', color: '#5f6368', marginBottom: '8px', display: 'block' }}>
+              Enter CTR % (e.g., 40 or 53) to automatically calculate Impressions from Views, or Views from Impressions.
+            </span>
+            <div className="fetch-row" style={{ gap: '10px' }}>
               <input
                 type="number"
                 className="form-input"
-                style={{ flex: 1 }}
-                placeholder="Enter CTR % e.g. 53 for 53% or 40 for 40%"
+                style={{ flex: 1, backgroundColor: '#ffffff', borderColor: '#a8c7fa', fontWeight: 500 }}
+                placeholder="Enter CTR % (e.g. 53 for 53% or 40 for 40%)"
                 value={ctrPercent}
                 onChange={(e) => setCtrPercent(e.target.value)}
                 onKeyDown={(e) => {
@@ -524,6 +540,7 @@ export default function App() {
                 className="btn-primary"
                 onClick={() => handleCalculateImpressionsFromCTR()}
                 type="button"
+                style={{ backgroundColor: '#1a73e8', fontWeight: 600 }}
               >
                 Calc Impressions
               </button>
@@ -531,16 +548,17 @@ export default function App() {
                 className="btn-secondary"
                 onClick={() => handleCalculateViewsFromCTR()}
                 type="button"
+                style={{ backgroundColor: '#ffffff', borderColor: '#1a73e8', color: '#1a73e8', fontWeight: 600 }}
               >
                 Calc Views
               </button>
             </div>
-            <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: '#5f6368' }}>CTR Presets:</span>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('4'); handleCalculateImpressionsFromCTR(4); }} type="button">4% CTR</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('10'); handleCalculateImpressionsFromCTR(10); }} type="button">10% CTR</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('40'); handleCalculateImpressionsFromCTR(40); }} type="button">40% CTR</button>
-              <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => { setCtrPercent('53'); handleCalculateImpressionsFromCTR(53); }} type="button">53% CTR</button>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', fontWeight: 500, color: '#3c4043' }}>Quick Presets:</span>
+              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('4'); handleCalculateImpressionsFromCTR(4); }} type="button">4% CTR (e.g. 1.2K views → 30K imp)</button>
+              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('10'); handleCalculateImpressionsFromCTR(10); }} type="button">10% CTR</button>
+              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('40'); handleCalculateImpressionsFromCTR(40); }} type="button">40% CTR (e.g. 100 views → 250 imp)</button>
+              <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px', backgroundColor: '#ffffff' }} onClick={() => { setCtrPercent('53'); handleCalculateImpressionsFromCTR(53); }} type="button">53% CTR (e.g. 301K views → 568K imp)</button>
             </div>
           </div>
         </div>
