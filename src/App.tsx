@@ -196,7 +196,7 @@ export default function App() {
           const header = element.querySelector('.analytics-header') as HTMLElement;
           if (header) {
             header.style.borderBottom = 'none';
-            header.style.boxShadow = '0px 3px 6px rgba(0, 0, 0, 0.12)';
+            header.style.boxShadow = '0px 3px 8px rgba(0, 0, 0, 0.28)';
           }
 
           const content = element.querySelector('.analytics-content') as HTMLElement;
