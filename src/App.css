@@ -12,7 +12,7 @@
 /* ── MAIN SCREENSHOT CAPTURE AREA ── */
 .capture-card {
   width: 100%;
-  max-width: 960px;
+  max-width: 740px;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(60, 64, 67, 0.12), 0 1px 2px rgba(60, 64, 67, 0.24);
@@ -293,7 +293,7 @@
 
 .metric-value.dashed-underline {
   border-bottom: 4px dashed #202124;
-  padding-bottom: 2px;
+  padding-bottom: 1px;
   cursor: pointer;
   display: inline-block;
 }

@@ -159,7 +159,7 @@ export default function App() {
     }
   };
 
-  // Download high-resolution PNG screenshot (Always exports in Desktop layout width)
+  // Download high-resolution PNG screenshot (Always exports in compact Desktop layout width 740px)
   const handleDownloadScreenshot = async () => {
     if (!hasFetched) {
       alert('Please fetch a YouTube link first before downloading analytics.');
@@ -174,10 +174,10 @@ export default function App() {
       const origMinWidth = cardEl.style.minWidth;
       const origMaxWidth = cardEl.style.maxWidth;
 
-      // Enforce Desktop layout dimensions during screenshot capture (800px)
-      cardEl.style.width = '800px';
-      cardEl.style.minWidth = '800px';
-      cardEl.style.maxWidth = '800px';
+      // Enforce Desktop layout dimensions during screenshot capture (740px)
+      cardEl.style.width = '740px';
+      cardEl.style.minWidth = '740px';
+      cardEl.style.maxWidth = '740px';
 
       const canvas = await html2canvas(cardEl, {
         scale: 3,
@@ -186,11 +186,11 @@ export default function App() {
         allowTaint: true,
         logging: false,
         imageTimeout: 0,
-        windowWidth: 1200,
+        windowWidth: 1024,
         onclone: (_clonedDoc, element) => {
-          element.style.width = '840px';
-          element.style.minWidth = '840px';
-          element.style.maxWidth = '840px';
+          element.style.width = '740px';
+          element.style.minWidth = '740px';
+          element.style.maxWidth = '740px';
           element.style.boxSizing = 'border-box';
 
           const content = element.querySelector('.analytics-content') as HTMLElement;
@@ -199,7 +199,7 @@ export default function App() {
             content.style.flexDirection = 'row';
             content.style.flexWrap = 'nowrap';
             content.style.justifyContent = 'flex-start';
-            content.style.gap = '48px';
+            content.style.gap = '44px';
             content.style.width = '100%';
           }
           const videoGroup = element.querySelector('.video-info-group') as HTMLElement;
@@ -213,7 +213,7 @@ export default function App() {
             metricsGroup.style.flexShrink = '0';
             metricsGroup.style.display = 'flex';
             metricsGroup.style.flexDirection = 'row';
-            metricsGroup.style.gap = '64px';
+            metricsGroup.style.gap = '48px';
           }
         }
       });
