@@ -204,7 +204,8 @@ export default function App() {
             content.style.marginLeft = '-24px';
             content.style.marginRight = '-24px';
             content.style.boxSizing = 'border-box';
-            content.style.borderTop = 'none';
+            content.style.borderTop = '1px solid #dadce0';
+            content.style.borderBottom = '1px solid #dadce0';
           }
           const videoGroup = element.querySelector('.video-info-group') as HTMLElement;
           if (videoGroup) {
