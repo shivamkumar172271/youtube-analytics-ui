@@ -88,7 +88,7 @@ export default function App() {
 
 
   // Truncate title string with "..." if long, ensuring html2canvas canvas export renders the "..." dot reliably
-  const formatTitleWithEllipsis = (title: string, maxLength: number = 34) => {
+  const formatTitleWithEllipsis = (title: string, maxLength: number = 31) => {
     if (!title) return 'Untitled Video';
     if (title.length <= maxLength) return title;
     return title.substring(0, maxLength).trim() + '...';
