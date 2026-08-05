@@ -201,17 +201,6 @@ export default function App() {
             header.style.boxShadow = '0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2)';
           }
 
-          const shadowStrip = element.querySelector('.header-shadow-strip') as HTMLElement;
-          if (shadowStrip) {
-            shadowStrip.style.display = 'block';
-            shadowStrip.style.position = 'absolute';
-            shadowStrip.style.bottom = '-7px';
-            shadowStrip.style.left = '0';
-            shadowStrip.style.right = '0';
-            shadowStrip.style.height = '7px';
-            shadowStrip.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.04) 4px, rgba(0, 0, 0, 0) 7px)';
-          }
-
           const content = element.querySelector('.analytics-content') as HTMLElement;
           if (content) {
             content.style.display = 'flex';
@@ -295,7 +284,6 @@ export default function App() {
             <X size={20} />
           </button>
           <h1 className="header-title">Analytics</h1>
-          <div className="header-shadow-strip" />
         </header>
 
         {/* Tab Navigation */}
