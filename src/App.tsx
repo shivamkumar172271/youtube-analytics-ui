@@ -94,51 +94,147 @@ export default function App() {
     return title.substring(0, maxLength).trim() + '...';
   };
 
-  // Convert URL image to Base64 to ensure pixel-perfect rendering in html2canvas without CORS distortion
-  const convertUrlToBase64 = async (url: string): Promise<string> => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = () => resolve(url);
-        reader.readAsDataURL(blob);
-      });
-    } catch {
-      return url;
+  // Helper to extract YouTube Video ID from any YouTube URL (Watch, Shorts, Embed, Youtu.be, etc.)
+  const extractYoutubeVideoId = (url: string): string | null => {
+    if (!url) return null;
+    const cleanUrl = url.trim();
+
+    // Raw 11-char ID
+    if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      return cleanUrl;
     }
+
+    // Matches:
+    // - youtube.com/shorts/VIDEO_ID
+    // - youtube.com/watch?v=VIDEO_ID
+    // - youtube.com/v/VIDEO_ID
+    // - youtube.com/embed/VIDEO_ID
+    // - youtube.com/live/VIDEO_ID
+    // - youtu.be/VIDEO_ID
+    const regExp = /(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:shorts\/|watch\?.*v=|v\/|embed\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = cleanUrl.match(regExp);
+    if (match && match[1]) {
+      return match[1];
+    }
+
+    return null;
   };
 
-  // Fetch YouTube Title & Thumbnail using noembed
+  // Convert URL image to Base64 to ensure pixel-perfect rendering in html2canvas without CORS distortion
+  const convertUrlToBase64 = async (url: string): Promise<string> => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result && typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('Failed to convert to base64'));
+        }
+      };
+      reader.onerror = () => reject(new Error('FileReader error'));
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  // Fetch YouTube Title & Thumbnail using YouTube official oEmbed with fallbacks (Supports Shorts, Watch, Youtu.be, etc.)
   const handleFetchYoutube = async () => {
     if (!youtubeUrl.trim()) return;
     setIsFetching(true);
     try {
-      const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(youtubeUrl)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.title) {
-          setVideoTitle(data.title);
-        } else {
-          setVideoTitle('YouTube Video');
+      const videoId = extractYoutubeVideoId(youtubeUrl);
+      const canonicalUrl = videoId
+        ? `https://www.youtube.com/watch?v=${videoId}`
+        : youtubeUrl.trim();
+
+      let title = '';
+      let authorName = '';
+      let rawThumbUrl = '';
+
+      // Tier 1: YouTube Official oEmbed API (Supports standard watch URLs and converted Shorts URLs)
+      try {
+        const ytOembedRes = await fetch(
+          `https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalUrl)}&format=json`
+        );
+        if (ytOembedRes.ok) {
+          const ytData = await ytOembedRes.json();
+          if (ytData.title) title = ytData.title;
+          if (ytData.author_name) authorName = ytData.author_name;
+          if (ytData.thumbnail_url) rawThumbUrl = ytData.thumbnail_url;
         }
-        if (data.author_name) {
-          setArtist(data.author_name);
-        } else {
-          setArtist('YouTube Channel');
-        }
-        if (data.thumbnail_url) {
-          const base64Thumb = await convertUrlToBase64(data.thumbnail_url);
-          setCustomThumbnail(base64Thumb);
-        }
-        setDuration('03:15');
-        setImpressions('450K');
-        setTrueViewViews('280K');
-        setHasFetched(true);
-      } else {
-        alert('Could not fetch YouTube details. Please check the URL.');
+      } catch {
+        // Fallback to Tier 2 if YouTube oEmbed fails
       }
+
+      // Tier 2: noembed fallback
+      if (!title) {
+        try {
+          const noembedRes = await fetch(
+            `https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`
+          );
+          if (noembedRes.ok) {
+            const noembedData = await noembedRes.json();
+            if (noembedData.title) title = noembedData.title;
+            if (noembedData.author_name) authorName = noembedData.author_name;
+            if (!rawThumbUrl && noembedData.thumbnail_url) rawThumbUrl = noembedData.thumbnail_url;
+          }
+        } catch {
+          // Fallback if noembed fails
+        }
+      }
+
+      // Update title & artist state
+      if (title) {
+        setVideoTitle(title);
+      } else if (videoId) {
+        setVideoTitle(`YouTube Video (${videoId})`);
+      } else {
+        setVideoTitle('YouTube Video');
+      }
+
+      if (authorName) {
+        setArtist(authorName);
+      } else {
+        setArtist('YouTube Channel');
+      }
+
+      // Tier 3: High-Res Thumbnail Base64 Resolution with Fallbacks
+      const thumbnailCandidates: string[] = [];
+      if (rawThumbUrl) thumbnailCandidates.push(rawThumbUrl);
+      if (videoId) {
+        thumbnailCandidates.push(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`);
+        thumbnailCandidates.push(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
+        thumbnailCandidates.push(`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`);
+        thumbnailCandidates.push(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`);
+      }
+
+      let finalBase64Thumb: string | null = null;
+      for (const candidate of thumbnailCandidates) {
+        try {
+          const base64 = await convertUrlToBase64(candidate);
+          if (base64 && base64.startsWith('data:image')) {
+            finalBase64Thumb = base64;
+            break;
+          }
+        } catch {
+          // Try next candidate image
+        }
+      }
+
+      if (finalBase64Thumb) {
+        setCustomThumbnail(finalBase64Thumb);
+      } else if (videoId) {
+        setCustomThumbnail(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
+      }
+
+      setDuration('03:15');
+      if (!impressions) setImpressions('450K');
+      if (!trueViewViews) setTrueViewViews('280K');
+      setHasFetched(true);
     } catch (e) {
       alert('Could not fetch YouTube details. Please check the URL.');
     } finally {
