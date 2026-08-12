@@ -279,7 +279,7 @@ export const ViewTrackingView: React.FC = () => {
               title="Add traffic source"
               onClick={handleAddRow}
             >
-              +
+              <Plus size={13} strokeWidth={2.5} />
             </button>
           </div>
 
