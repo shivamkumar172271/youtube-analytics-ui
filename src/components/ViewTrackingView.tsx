@@ -417,7 +417,7 @@ export const ViewTrackingView: React.FC = () => {
   // Custom Export File Name state
   const [customExportName, setCustomExportName] = useState('');
 
-  // Export Screenshot PNG (High Quality = 3x scale, Medium Quality = 1.8x downsampled, Low Quality = 1.2x downsampled)
+  // Export Screenshot PNG (High Quality = 3x scale, Medium Quality = 1.9x downsampled, Low Quality = 1.28x downsampled)
   const handleDownloadScreenshot = async (quality: 'high' | 'medium' | 'low') => {
     if (!captureRef.current) return;
     try {
@@ -436,8 +436,8 @@ export const ViewTrackingView: React.FC = () => {
       if (quality === 'high') {
         dataUrl = highResCanvas.toDataURL('image/png');
       } else {
-        // Target scale: 1.8x for medium, 1.2x for low
-        const scaleMult = quality === 'medium' ? 1.8 : 1.2;
+        // Target scale: 1.9x for medium, 1.28x for low (~5KB file size reduction)
+        const scaleMult = quality === 'medium' ? 1.9 : 1.28;
         const targetCanvas = document.createElement('canvas');
         targetCanvas.width = Math.round(cardEl.offsetWidth * scaleMult);
         targetCanvas.height = Math.round(cardEl.offsetHeight * scaleMult);
