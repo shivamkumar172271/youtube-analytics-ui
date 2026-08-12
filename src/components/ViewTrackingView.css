@@ -213,6 +213,7 @@
 .vt-row-title.bold {
   font-weight: 700;
   font-size: 14px;
+  color: #000;
   letter-spacing: 0;
 }
 
@@ -235,6 +236,7 @@
 .vt-row-views.bold {
   font-weight: 700;
   font-size: 14px;
+  color: #000;
   letter-spacing: 0;
 }
 
