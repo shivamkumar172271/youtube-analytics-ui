@@ -47,6 +47,18 @@
   position: relative;
 }
 
+/* Vertical line extending up to the very top edge of the main card box */
+.vt-header-left::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -16px;
+  height: 16px;
+  width: 1px;
+  background-color: #e0e0e0;
+  z-index: 1;
+}
+
 .vt-breadcrumb {
   display: flex;
   align-items: center;
@@ -67,7 +79,14 @@
   text-decoration: underline;
 }
 
-.vt-breadcrumb-separator,
+.vt-breadcrumb-separator {
+  color: #606060;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 1px;
+  transform: translateY(0.5px);
+}
+
 .vt-breadcrumb-sub {
   color: #606060;
   /* Secondary gray, exact same color for > and YouTube advertising */
@@ -83,9 +102,9 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid #606060;
+  border: 2px solid #222222;
   background: #ffffff;
-  color: #606060;
+  color: #222222;
   cursor: pointer;
   transition: all 0.15s ease;
   padding: 0;
@@ -99,8 +118,8 @@
 
 .vt-header-add-btn:hover {
   background-color: #f2f2f2;
-  border-color: #333333;
-  color: #333333;
+  border-color: #000000;
+  color: #000000;
   transform: scale(1.1);
 }
 

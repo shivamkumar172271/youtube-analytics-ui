@@ -484,7 +484,7 @@ export const ViewTrackingView: React.FC = () => {
               title="Add traffic source"
               onClick={handleAddRow}
             >
-              <Plus size={13} strokeWidth={2.5} />
+              <Plus size={13} strokeWidth={2.5} color="#222222" />
             </button>
           </div>
 
