@@ -417,12 +417,12 @@ export const ViewTrackingView: React.FC = () => {
   // Custom Export File Name state
   const [customExportName, setCustomExportName] = useState('');
 
-  // Export Screenshot PNG (High Quality = 3x scale crisp PNG, Low Quality = 3x rendered canvas downsampled to 1x with 100% identical layout & structure)
-  const handleDownloadScreenshot = async (quality: 'high' | 'low') => {
+  // Export Screenshot PNG (High Quality = 3x scale, Medium Quality = 1.8x downsampled, Low Quality = 1.2x downsampled)
+  const handleDownloadScreenshot = async (quality: 'high' | 'medium' | 'low') => {
     if (!captureRef.current) return;
     try {
       const cardEl = captureRef.current;
-      // Always render at full 3x scale so structure, font weight & borders are 100% pixel-identical!
+      // Always render at full 3x scale first so structure, font weight & borders are 100% pixel-identical!
       const highResCanvas = await html2canvas(cardEl, {
         scale: 3,
         backgroundColor: '#ffffff',
@@ -436,17 +436,17 @@ export const ViewTrackingView: React.FC = () => {
       if (quality === 'high') {
         dataUrl = highResCanvas.toDataURL('image/png');
       } else {
-        // Downsample the 3x canvas to 1x resolution canvas for low quality export
-        // This guarantees 0 font shifts, 0 border shifts, and 100% identical structure to High-Res!
-        const lowCanvas = document.createElement('canvas');
-        lowCanvas.width = cardEl.offsetWidth;
-        lowCanvas.height = cardEl.offsetHeight;
-        const ctx = lowCanvas.getContext('2d');
+        // Target scale: 1.8x for medium, 1.2x for low
+        const scaleMult = quality === 'medium' ? 1.8 : 1.2;
+        const targetCanvas = document.createElement('canvas');
+        targetCanvas.width = Math.round(cardEl.offsetWidth * scaleMult);
+        targetCanvas.height = Math.round(cardEl.offsetHeight * scaleMult);
+        const ctx = targetCanvas.getContext('2d');
         if (ctx) {
           ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'medium';
-          ctx.drawImage(highResCanvas, 0, 0, lowCanvas.width, lowCanvas.height);
-          dataUrl = lowCanvas.toDataURL('image/png');
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(highResCanvas, 0, 0, targetCanvas.width, targetCanvas.height);
+          dataUrl = targetCanvas.toDataURL('image/png');
         } else {
           dataUrl = highResCanvas.toDataURL('image/png');
         }
@@ -455,7 +455,8 @@ export const ViewTrackingView: React.FC = () => {
       // Dynamically use custom export name if set, else fetched YouTube video title, else subSource
       const rawName = customExportName.trim() || fetchedVideoTitle || subSource || parentSource || 'YouTube_View_Tracking';
       const cleanName = rawName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
-      const finalFileName = `${cleanName || 'YouTube_Analytics'}_${quality === 'high' ? 'HighRes' : 'LowQuality'}.png`;
+      const suffix = quality === 'high' ? 'HighRes' : quality === 'medium' ? 'MediumQuality' : 'LowQuality';
+      const finalFileName = `${cleanName || 'YouTube_Analytics'}_${suffix}.png`;
 
       const link = document.createElement('a');
       link.download = finalFileName;
@@ -787,24 +788,34 @@ export const ViewTrackingView: React.FC = () => {
             <RefreshCw size={16} /> Reset Screenshot Defaults
           </button>
 
-          {/* Two Download Options: Low Quality / Standard vs High-Res PNG */}
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Three Download Options: Low Quality (1x), Medium Quality (2x), High-Res PNG (3x) */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <button
               type="button"
               className="vt-btn-secondary"
               onClick={() => handleDownloadScreenshot('low')}
-              title="Download standard quality screenshot (1x Scale)"
+              title="Download standard low quality screenshot (1x Scale)"
             >
-              <Download size={16} /> Download Low Quality (PNG)
+              <Download size={15} /> Low Quality
+            </button>
+
+            <button
+              type="button"
+              className="vt-btn-secondary"
+              onClick={() => handleDownloadScreenshot('medium')}
+              title="Download balanced medium quality screenshot (2x Scale)"
+              style={{ borderColor: '#1a73e8', color: '#1a73e8' }}
+            >
+              <Download size={15} /> Medium Quality
             </button>
 
             <button
               type="button"
               className="vt-btn-primary"
               onClick={() => handleDownloadScreenshot('high')}
-              title="Download high resolution screenshot (3x Scale)"
+              title="Download ultra sharp high resolution screenshot (3x Scale)"
             >
-              <Download size={16} /> Download High-Res (PNG)
+              <Download size={15} /> High-Res PNG
             </button>
           </div>
         </div>
