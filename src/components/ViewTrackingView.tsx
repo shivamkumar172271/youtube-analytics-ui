@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Plus, Download, RefreshCw, Trash2, ArrowDown, Settings, Scale } from 'lucide-react';
+import { Plus, Download, RefreshCw, Trash2, ArrowDown, Settings, Scale, Link as LinkIcon } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import './ViewTrackingView.css';
 
@@ -26,6 +26,10 @@ export const ViewTrackingView: React.FC = () => {
   // State for Breadcrumbs
   const [parentSource, setParentSource] = useState('Traffic source');
   const [subSource, setSubSource] = useState('YouTube advertising');
+
+  // YouTube Fetcher State
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [isFetching, setIsFetching] = useState(false);
 
   // Total Views numeric state (User editable input, e.g. 1455383 or 100)
   const [totalViewsNum, setTotalViewsNum] = useState<number>(1455383);
@@ -74,6 +78,59 @@ export const ViewTrackingView: React.FC = () => {
     const otherNumbers = str.substring(0, str.length - 3);
     const formattedOther = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
     return `${formattedOther},${lastThree}`;
+  };
+
+  // Helper to extract YouTube Video ID from any YouTube URL
+  const extractYoutubeVideoId = (url: string): string | null => {
+    if (!url) return null;
+    const cleanUrl = url.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) return cleanUrl;
+    const regExp = /(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:shorts\/|watch\?.*v=|v\/|embed\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = cleanUrl.match(regExp);
+    return match && match[1] ? match[1] : null;
+  };
+
+  // Fetch YouTube details (Title & update sub-category breadcrumb)
+  const handleFetchYoutube = async () => {
+    if (!youtubeUrl.trim()) return;
+    setIsFetching(true);
+    try {
+      const videoId = extractYoutubeVideoId(youtubeUrl);
+      const canonicalUrl = videoId
+        ? `https://www.youtube.com/watch?v=${videoId}`
+        : youtubeUrl.trim();
+
+      let title = '';
+      try {
+        const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalUrl)}&format=json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.title) title = data.title;
+        }
+      } catch {}
+
+      if (!title) {
+        try {
+          const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(canonicalUrl)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.title) title = data.title;
+          }
+        } catch {}
+      }
+
+      if (title) {
+        setSubSource(title);
+      } else if (videoId) {
+        setSubSource(`YouTube Video (${videoId})`);
+      } else {
+        setSubSource('YouTube Video');
+      }
+    } catch (e) {
+      alert('Could not fetch YouTube link. Please check the URL.');
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   // Handler for changing Total Views Input
@@ -215,6 +272,7 @@ export const ViewTrackingView: React.FC = () => {
   const handleResetDefaults = () => {
     setParentSource('Traffic source');
     setSubSource('YouTube advertising');
+    setYoutubeUrl('');
     setTotalViewsNum(1455383);
     setNumberFormat('indian');
     setAutoBalance(true);
@@ -239,13 +297,13 @@ export const ViewTrackingView: React.FC = () => {
     ]);
   };
 
-  // Export Screenshot PNG
-  const handleDownloadScreenshot = async () => {
+  // Export Screenshot PNG (High Quality = scale 3, Low/Standard Quality = scale 1)
+  const handleDownloadScreenshot = async (quality: 'high' | 'low') => {
     if (!captureRef.current) return;
     try {
       const cardEl = captureRef.current;
       const canvas = await html2canvas(cardEl, {
-        scale: 3,
+        scale: quality === 'high' ? 3 : 1,
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
@@ -253,7 +311,7 @@ export const ViewTrackingView: React.FC = () => {
       });
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.download = `YouTube_View_Tracking_${new Date().toISOString().slice(0, 10)}.png`;
+      link.download = `YouTube_View_Tracking_${quality === 'high' ? 'HighRes' : 'LowQuality'}_${new Date().toISOString().slice(0, 10)}.png`;
       link.href = dataUrl;
       link.click();
     } catch (e) {
@@ -377,6 +435,35 @@ export const ViewTrackingView: React.FC = () => {
 
         {/* Global Settings Grid */}
         <div className="vt-cp-grid">
+          {/* YouTube Link Fetcher (Just like Analytics) */}
+          <div className="vt-cp-field" style={{ gridColumn: '1 / -1', backgroundColor: '#f0f4f9', padding: '14px', borderRadius: '6px', border: '1.5px solid #c2e7ff' }}>
+            <label className="vt-cp-label" style={{ color: '#1a73e8', fontWeight: 600, fontSize: '14px' }}>
+              🔗 Fetch YouTube Link Details
+            </label>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+              <input
+                type="text"
+                className="vt-cp-input"
+                style={{ flex: 1, backgroundColor: '#ffffff' }}
+                placeholder="Paste YouTube Video URL (e.g., https://www.youtube.com/watch?v=... or Shorts)"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleFetchYoutube();
+                }}
+              />
+              <button
+                type="button"
+                className="vt-btn-primary"
+                onClick={handleFetchYoutube}
+                disabled={isFetching}
+                style={{ padding: '8px 16px' }}
+              >
+                <LinkIcon size={14} /> {isFetching ? 'Fetching...' : 'Fetch Video'}
+              </button>
+            </div>
+          </div>
+
           {/* Total Views Input Field */}
           <div className="vt-cp-field" style={{ gridColumn: '1 / -1', backgroundColor: '#e8f0fe', padding: '12px', borderRadius: '6px', border: '1.5px solid #1a73e8' }}>
             <label className="vt-cp-label" style={{ color: '#1a73e8', fontWeight: 600, fontSize: '14px' }}>
@@ -517,13 +604,26 @@ export const ViewTrackingView: React.FC = () => {
             <RefreshCw size={16} /> Reset Screenshot Defaults
           </button>
 
-          <button
-            type="button"
-            className="vt-btn-primary"
-            onClick={handleDownloadScreenshot}
-          >
-            <Download size={16} /> Download High-Res Screenshot (PNG)
-          </button>
+          {/* Two Download Options: Low Quality / Standard vs High-Res PNG */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="vt-btn-secondary"
+              onClick={() => handleDownloadScreenshot('low')}
+              title="Download standard quality screenshot (1x Scale)"
+            >
+              <Download size={16} /> Download Low Quality (PNG)
+            </button>
+
+            <button
+              type="button"
+              className="vt-btn-primary"
+              onClick={() => handleDownloadScreenshot('high')}
+              title="Download high resolution screenshot (3x Scale)"
+            >
+              <Download size={16} /> Download High-Res (PNG)
+            </button>
+          </div>
         </div>
       </div>
     </div>

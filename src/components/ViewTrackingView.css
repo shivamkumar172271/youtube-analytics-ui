@@ -82,14 +82,11 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2.5px solid #0d0d0d;
+  border: 2px solid #606060;
   background: #ffffff;
-  color: #0d0d0d;
+  color: #606060;
   cursor: pointer;
   transition: all 0.15s ease;
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1;
   padding: 0;
   outline: none;
   position: absolute;
@@ -101,6 +98,8 @@
 
 .vt-header-add-btn:hover {
   background-color: #f2f2f2;
+  border-color: #333333;
+  color: #333333;
   transform: scale(1.1);
 }
 
@@ -166,13 +165,14 @@
   justify-content: flex-start;
   align-self: stretch;
   height: 100%;
+  padding: 2px 0;
 }
 
 .vt-color-bar {
   width: 5px;
   height: 100%;
   min-height: 100%;
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 .vt-checkbox-container {
