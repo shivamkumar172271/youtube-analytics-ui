@@ -455,8 +455,7 @@ export const ViewTrackingView: React.FC = () => {
       // Dynamically use custom export name if set, else fetched YouTube video title, else subSource
       const rawName = customExportName.trim() || fetchedVideoTitle || subSource || parentSource || 'YouTube_View_Tracking';
       const cleanName = rawName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
-      const suffix = quality === 'high' ? 'HighRes' : quality === 'medium' ? 'MediumQuality' : 'LowQuality';
-      const finalFileName = `${cleanName || 'YouTube_Analytics'}_${suffix}.png`;
+      const finalFileName = `${cleanName || 'YouTube_Analytics'}.png`;
 
       const link = document.createElement('a');
       link.download = finalFileName;
